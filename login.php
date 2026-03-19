@@ -1,9 +1,16 @@
 <?php
 session_start();
 
+// Configure the single admin account here (email must match exactly).
+// You can change this value to your admin's email.
+$ADMIN_EMAIL = 'admin@admin.com'; 
+
 // If already logged in, go straight to dashboard
 if (isset($_SESSION['username'])) {
-    header('Location: dashboard.php');
+    // Re-check admin status from the session email (prevents stale `is_admin` values).
+    $isAdmin = (strtolower(trim($_SESSION['username'])) === strtolower(trim($ADMIN_EMAIL)));
+    $_SESSION['is_admin'] = $isAdmin;
+    header('Location: ' . ($isAdmin ? 'admin_dashboard.php' : 'dashboard.php'));
     exit();
 }
 
@@ -37,7 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id']  = $id;
                 $_SESSION['username'] = $db_email;
 
-                header('Location: dashboard.php');
+                $isAdmin = (strtolower(trim($db_email)) === strtolower(trim($ADMIN_EMAIL)));
+                $_SESSION['is_admin'] = $isAdmin;
+
+                header('Location: ' . ($isAdmin ? 'admin_dashboard.php' : 'dashboard.php'));
                 exit();
             } else {
                 $error = 'Invalid email or password.';

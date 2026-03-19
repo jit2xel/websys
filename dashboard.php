@@ -7,6 +7,12 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+// If this is an admin session, send them to the admin dashboard.
+if (!empty($_SESSION['is_admin']) && $_SESSION['is_admin'] === true) {
+    header('Location: admin_dashboard.php');
+    exit();
+}
+
 $username = htmlspecialchars($_SESSION['username']);
 $user_id  = htmlspecialchars($_SESSION['user_id']);
 ?>

@@ -1,9 +1,13 @@
 <?php
 session_start();
 
+// Must match the value in login.php
+$ADMIN_EMAIL = 'admin@example.com';
+
 // If already logged in, go straight to dashboard
 if (isset($_SESSION['username'])) {
-    header('Location: dashboard.php');
+    $isAdmin = !empty($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
+    header('Location: ' . ($isAdmin ? 'admin_dashboard.php' : 'dashboard.php'));
     exit();
 }
 
@@ -68,7 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         session_regenerate_id(true);
                         $_SESSION['user_id'] = $newId;
                         $_SESSION['username'] = $email;
-                        header('Location: dashboard.php');
+                        $_SESSION['is_admin'] = (strtolower($email) === strtolower($ADMIN_EMAIL));
+                        header('Location: ' . ($_SESSION['is_admin'] ? 'admin_dashboard.php' : 'dashboard.php'));
                         exit();
                     } else {
                         $error = 'Could not create account right now.';

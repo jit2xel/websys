@@ -1,9 +1,13 @@
 <?php
 session_start();
 
+// Must match the value in login.php
+// (Admin access is still controlled only by ADMIN_EMAIL in login.php)
+
 // If already logged in, go straight to dashboard
 if (isset($_SESSION['username'])) {
-    header('Location: dashboard.php');
+    $isAdmin = !empty($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
+    header('Location: ' . ($isAdmin ? 'admin_dashboard.php' : 'dashboard.php'));
     exit();
 }
 
